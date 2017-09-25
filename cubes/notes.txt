@@ -1,0 +1,8 @@
+8/24/17
+    Need 3 things
+        renderer
+        camera
+        scene
+        (spotlight) sometimes
+
+    

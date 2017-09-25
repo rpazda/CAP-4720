@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <script src="libs/three.js"></script>
+    <script src="libs/keyboard.js"></script>
+    <script src="libs/physi.js"></script>
+    <script src="fonts/helvetiker_regular.typeface.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:700" rel="stylesheet"> 
+
+    <style>
+        body
+        {
+            background-color: black;
+            color: #c9fcee;
+            font-family: 'Orbitron', sans-serif;
+        }
+        #score-display, #shot-counter
+        {
+            color: #0a5afc;
+        }
+        button
+        {
+            margin-bottom: 5px;
+        }
+        .spacer
+        {
+            margin-top: 5px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col s3">
+                Cannon Status: <div id="cannon-status"></div>
+            </div>
+
+            <div class="col s3">
+                Score: <div id="score-display"></div>
+            </div>
+
+            <div class="col s3">
+                Shots Remaining: <div id="shot-counter"></div>
+            </div>
+            <div class="col s3">
+                <img src="assets/logo.png"style="width:30%; float: right"></img>
+                <br>
+                <h6>richard pazda</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s9" id="game-window">
+            <script src="js/angryBirds.js"></script>
+        </div>
+        <div class="col s3">  
+            <h5>System<br/>Controls</h5>
+            <span class="red-text"><h7>[cannon aim malfunction!]</h7></span>
+            <ul style="list-style-type: none">
+                <li><span style="color:#ef52f2">A</span> - Tilt Cannon Up</li>
+                <li><span style="color:#ef52f2">D</span> -Tilt Cannon Down</li>
+                <li><span style="color:#ef52f2">W</span> - Rotate Cannon Left</li>
+                <li><span style="color:#ef52f2">S</span> - Rotate Cannon Right</li>
+
+                <li><span style="color:#ef52f2">F</span> - Fire Cannon</li>
+                <li><span style="color:#ef52f2">Q</span> - Reload Cannon</li>
+            </ul>
+            
+            <button class="btn cameras" onClick="selectCamera(1)">Camera 1</button>
+            <button class="btn cameras" onClick="selectCamera(2)">Camera 2</button>
+            <button class="btn cameras" onClick="selectCamera(3)">Camera 3</button>
+            <button class="btn cameras" onClick="selectCamera(4)">Camera 4</button>
+            
+            <button class="btn teal darken-4 spacer" onClick="selectCamera(5)"> Gunner Cam</button>
+
+            <button class="btn green spacer" onclick="toggleMusic()" id="music-toggle">Music Off</button>
+
+            <div class="input-field col s12">
+                <select id="level-select" onChange="changeLevel()">
+                    <option value="1">Earth-Like Asteroid</option>
+                    <option value="2">Mars</option>
+                    <option value="3">Neptune</option>
+                </select>
+                <label>Level Select (Teleportation Broken) </label>
+            </div>
+
+        </div>
+    </div>
+
+    
+
+</body>
+
+</html>

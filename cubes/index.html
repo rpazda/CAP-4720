@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<meta charset="utf-8"/>
+
+<html>
+
+    <head>
+        
+        <script src="libs/three.js"></script>
+
+        
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+          
+    </head>
+
+    <body>
+
+        <button class="btn" onclick="addCircleCube();">New Cube</button>
+        
+        <script>
+            //three required elements
+        
+            var renderer;
+            var scene;
+            var camera;
+            
+            var spotLight;
+            
+            var cubes = [];
+
+            var colors = ['red','yellow','blue','purple','green','orange'];
+
+            var count = 0;
+
+            //var cube;
+
+            function init(){
+                scene = new THREE.Scene();
+                //Perspective angle(frustum angle, aspect ratio, closeness)
+                camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
+                renderer = new THREE.WebGLRenderer();
+                
+                initRenderer();
+                
+
+                initCamera();
+                
+                
+
+                addSpotLight();
+                
+
+                //addstuff();
+                var cubeGeometry = new THREE.BoxGeometry(4,4,4);
+                var cubeMaterial = new THREE.MeshLambertMaterial({color: 'purple'});
+                var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+                cube.castShadow = true;
+                
+                cube.position.x = 0;
+                cube.position.y = 0;
+                cube.position.z = 0;
+
+                cubes[count] = cube;
+                count++;
+
+                scene.add(cube);
+                //rainbowCubeCircle();
+                rainbowCubeOrbitals();
+
+                document.body.appendChild(renderer.domElement);
+                
+                render();
+            }
+            
+            function render()
+            {
+                // Request animation frame
+                requestAnimationFrame( render );
+                
+                for( i = 0; i < count; i++)
+                {
+                    rotateCube(i);
+                }
+
+                // Call render()
+                renderer.render( scene, camera );
+            }
+
+
+            function initRenderer()
+            {
+                renderer.setClearColor(0x000000, 1.0);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.shadowMap.enabled = true;
+            }
+
+            function initCamera()
+            {
+                camera.position.x = 12;
+                camera.position.y = 15;
+                camera.position.z = 16;
+                camera.lookAt(scene.position);
+            }
+
+            function addstuff()
+            {
+                
+            }
+
+            function addSpotLight()
+            {
+                spotLight = new THREE.SpotLight( 0xffffff );
+                spotLight.position.set(10,20,20);
+                spotLight.shadow.camera.near = 20;
+                spotLight.shadow.camera.far = 50;
+                spotLight.castShadow = true;
+                scene.add(spotLight);
+            }
+            
+            
+            function addRandomCube()
+            {   
+                let geo = new THREE.BoxGeometry( 1, 1, 1 );
+                let mat = new THREE.MeshLambertMaterial({color:'purple'});
+                let newCube = new THREE.Mesh(geo, mat);
+
+                newCube.position.x = Math.floor((Math.random()*10)+1);
+                newCube.position.y = Math.floor((Math.random()*10)+1);
+                newCube.position.z = Math.floor((Math.random()*10)+1);
+
+                newCube.rotation.x -= (Math.floor((Math.random()*10)+1))*0.1;
+                newCube.rotation.y -= (Math.floor((Math.random()*10)+1))*0.1;
+                newCube.rotation.z -= (Math.floor((Math.random()*10)+1))*0.1;
+
+                newCube.castShadow = true;
+
+                cubes[count] = newCube;
+                count++;
+
+                scene.add(newCube);
+                //render();
+            }
+
+            function addCircleCube()
+            {
+                let geo = new THREE.BoxGeometry( 1, 1, 1 );
+                let mat = new THREE.MeshLambertMaterial({color: colors[Math.floor((Math.random()*6))]});
+                let newCube = new THREE.Mesh(geo, mat);
+
+                let newPositionSeed = (Math.random()*10);
+                console.log(newPositionSeed);
+                let posY = Math.random() < 0.5 ? -1 : 1;
+                let posZ = Math.random() < 0.5 ? -1 : 1;
+
+                //newCube.position.x = 0;
+                //newCube.position.y = newPositionSeed*posY;
+                //newCube.position.z = Math.sqrt(100-(Math.pow(newPositionSeed,2)))*posZ;
+
+                addCubeRandomColor( Math.sqrt(100-(Math.pow(newPositionSeed,2)))*posZ , 0 , newPositionSeed*posY);
+                addCubeRandomColor( Math.sqrt(100-(Math.pow(newPositionSeed,2)))*posZ , newPositionSeed*posY , 0);
+
+                //console.log(newCube.position);
+
+                //newCube.castShadow = true;
+
+                cubes[count] = newCube;
+                count++;
+
+                scene.add(newCube);
+            }
+
+
+            function rainbowCubeOrbitals()
+            {
+                for(i=0; i<=10; i+=0.8)
+                {
+                    let tempy = i;
+                    let tempz = Math.sqrt(100-(Math.pow(tempy,2)));
+
+                    addCubeRandomColor(0,tempy,tempz);
+                    addCubeRandomColor(0,-tempy,tempz);
+                    addCubeRandomColor(0,tempy,-tempz);
+                    addCubeRandomColor(0,-tempy,-tempz);
+
+                    addCubeRandomColor(tempy, 0,tempz);
+                    addCubeRandomColor(-tempy, 0,tempz);
+                    addCubeRandomColor(tempy, 0,-tempz);
+                    addCubeRandomColor(-tempy, 0,-tempz);
+
+                    addCubeRandomColor(tempy,tempz, 0);
+                    addCubeRandomColor(-tempy,tempz, 0);
+                    addCubeRandomColor(tempy,-tempz, 0);
+                    addCubeRandomColor(-tempy,-tempz, 0);
+
+                    addCube(10,0,0, 'cyan', 2);
+                    addCube(-10,0,0, 'cyan', 2);
+                }
+            }
+
+            function addCubeRandomColor( x , y , z)
+            {
+                let geo = new THREE.BoxGeometry( 0.6, 0.6, 0.6 );
+                let mat = new THREE.MeshLambertMaterial({color: colors[Math.floor((Math.random()*6))]});
+                let newCube = new THREE.Mesh(geo, mat);
+
+                newCube.position.x = x;
+                newCube.position.y = y;
+                newCube.position.z = z;
+                
+                cubes[count] = newCube;
+                count++;
+
+                scene.add(newCube);
+            }
+
+            function addCube( x , y , z, specColor, size)
+            {
+                let geo = new THREE.BoxGeometry( size, size, size );
+                let mat = new THREE.MeshLambertMaterial({color: specColor});
+                let newCube = new THREE.Mesh(geo, mat);
+
+                newCube.position.x = x;
+                newCube.position.y = y;
+                newCube.position.z = z;
+                
+                cubes[count] = newCube;
+                count++;
+
+                scene.add(newCube);
+            }
+
+
+            function rotateCube(num)
+            {
+                    cubes[num].rotation.x += 0.015;
+                    cubes[num].rotation.y += 0.015;
+                    cubes[num].rotation.z += 0.015;
+            }
+
+            window.onload = init;
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <meta charset="UTF-8">
+
+        <script src="libs/three.js"></script>
+        <script src="libs/keyboard.js"></script>
+        <script src="fonts/helvetiker_regular.typeface.js"></script>
+
+        
+
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+</head>
+
+<body>
+    <button id="startStopButton" onclick="startGame()" class="btn">Start Game</button>
+
+    <button onclick="setAccelSlow()" class="btn red">Slow</button>
+    <button onclick="setAccelNormal()" class="btn yellow text-darken">Normal</button>
+    <button onclick="setAccelFast()" class="btn green">Fast</button>
+
+    <script src="js/pongDemo.js"></script>
+
+</body>
+
+</html>
