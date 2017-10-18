@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <script src="libs/three.js"></script>
+    <script src="libs/keyboard.js"></script>
+    <script src="libs/physi.js"></script>
+    <script src="fonts/helvetiker_regular.typeface.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:700" rel="stylesheet"> 
+
+    <style>
+        body
+        {
+            background-color: black;
+            color: #b2ffea;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        button
+        {
+            margin-bottom: 5px;
+        }
+        .spacer
+        {
+            margin-top: 5px;
+        }
+        .text-highlight-color
+        {
+            color:#ef52f2;
+        }
+        #endgame-modal
+        {
+            background-color:#46484c;
+        }
+        .modal .modal-footer
+        {
+            background-color:#46484c !important;
+        }
+        #begin-game-button
+        {
+            color: black !important;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col s3">
+                Lives Remaining <div id="lives-display"></div>
+            </div>
+
+            <div class="col s3">
+                Pellets Remaining <div id="pellets-counter"></div>
+            </div>
+
+            <div class="col s3">
+                Score <div id="score-display"></div>
+            </div>
+
+            <div class="col s3">
+                <img src="assets/logo.png"style="width:30%; float: right"></img>
+                <br>
+                <h6>richard pazda</h6>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col s9" id="game-window" style="height:650px">
+        
+        </div>
+
+        <div class="col s3">
+
+            <div class="row" id="begin-game">
+                <btn onClick="beginGame()" class="btn lime" id="begin-game-button">Begin Game</btn>
+            </div>
+
+            <div class="row">
+                <h5>Controls</h5>
+
+                    <ul style="list-style-type: none" class="col s10">
+                        <li><span class="text-highlight-color">W</span> - Move Forward</li>
+                        <li><span class="text-highlight-color">S</span> - Move Backward</li>
+                        <li><span class="text-highlight-color">A</span> - Strafe Left</li>
+                        <li><span class="text-highlight-color">D</span> - Strafe Right</li>
+                        <hr>
+                        <li>Use buttons to turn</li>
+                    </ul>
+
+                <btn class="btn purple" onclick="turnLeft()" id="">Turn Left</btn>
+                <btn class="btn purple spacer" onclick="turnRight()" id="">Turn Right</btn>
+
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <h5>Options</h5>
+
+                <btn class="btn purple" onclick="toggleMusic()" id="music-toggle">Music Off</btn>
+                <btn class="btn purple spacer" onclick="toggleSounds()" id="sounds-toggle">Sounds Off</btn>
+                <btn class="btn purple spacer" onclick="pauseGame(); render()" id="pause-button">Pause Game</btn>
+
+            </div>
+
+            <div class="row">
+                <div id="hud-map" style="width: 300px; height: 300px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/pacman3D.js"></script>
+
+    <div id="endgame-modal" class="modal">
+        <div class="modal-content" id="game-results-modal">
+            <center><span class="text-red"><h2>GAME OVER</h2></span></center>
+            <ul style="list-style-type: none">
+                <li><h4>Final Score: <span id="final-score" class="text-highlight-color"></span></h4></li>
+                <li><h4>Pellets Eaten: <span id="pellets-eaten" class="text-highlight-color"></span></h4></li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action waves-effect btn purple" onClick="window.location.reload()">Replay</a>
+        </div>
+    </div>
+
+</body>
+
+</html>
