@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
 
+    <title>r pazda</title>
+
     <script src="libs/three.js"></script>
     <script src="libs/keyboard.js"></script>
     <script src="libs/physi.js"></script>
@@ -63,15 +65,15 @@
 
         <div class="row" style="margin-top: 10px;">
             <div class="col s3">
-                 <div id="lives-display"></div>
+                 Time Remaining<div id="turn-timer-display"></div>
             </div>
 
             <div class="col s3">
-                 <div id="pellets-counter"></div>
+                 CPU Score<div id="cpu-score-display"></div>
             </div>
 
             <div class="col s3">
-                Score <div id="score-display"></div>
+                Player Score <div id="score-display"></div>
             </div>
 
             <div class="col s3">
@@ -84,14 +86,14 @@
     </div>
 
     <div class="row">
-        <div class="col s9" id="game-window" style="height:650px">
+        <div class="col s9" id="game-window">
         
         </div>
 
         <div class="col s3">
 
             <div class="row" id="begin-game">
-                <btn onClick="beginGame()" class="btn lime" id="begin-game-button">Begin Game</btn>
+                <btn onClick="beginGame()" class="btn lime" id="begin-game-button">Begin "Game"</btn>
             </div>
 
             <div class="row">

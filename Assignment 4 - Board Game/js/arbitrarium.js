@@ -16,7 +16,8 @@
 				Square board with movement based on "dice roll"
 				Point deductions for not completing turn in time
 				Mystery squares
-				
+				5x5 grid of squares, 16 spaces
+				2 players, -80y offset inside space
 	*/
 
 	/* 
@@ -41,18 +42,27 @@
 	var soundEnabled = true;
 	var gamePaused = false;
 	var gameEnded = false;
+
+	var spaceSize = 160;	//Size of board spaces
+	var playerOffsetX = -80;//X offset so pieces don't collide
+	var turnTime = 30;		//Time in seconds for players to complete turn
+
+	//Mapping between spaces on board and x,y coordinates
+	var boardSpacesX = [-2*spaceSize, -spaceSize, 0, spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, spaceSize, 0, -spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize ];
+	var boardSpacesY = [2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, spaceSize, 0, -spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize,-2*spaceSize, -spaceSize, 0, spaceSize ];
 	
 	Physijs.scripts.worker = 'libs/physijs_worker.js';
 	Physijs.scripts.ammo = 'ammo.js';
-	
-	function beginGame()
-	{
-		init();
-	}
 
 	$(document).ready(function() {
 
 	});
+
+	function beginGame()
+	{
+		init();
+		$('#begin-game-button').remove();
+	}
 
 	function init()
 	{
@@ -74,6 +84,7 @@
 		//loadMusic();
 		//loadSounds();
 		//createFloatingText();
+		loadGameBoard();
 
 		loadZune();
 		
@@ -202,11 +213,42 @@
 	///Load the game board
 	function loadGameBoard()
 	{
+		// var geometry = new THREE.PlaneGeometry( 1, 1 );
+		// var mesh = new THREE.Mesh( geometry, material );
+		// mesh.scale.x = image.width;
+		// mesh.scale.y = image.height;
 
+		var fieldSurface;
+        var fieldMaterial;
+        var planeMaterial;
+
+        fieldSurface = THREE.ImageUtils.loadTexture('assets/graph.png');
+        fieldMaterial = new THREE.MeshLambertMaterial({map: fieldSurface});
+        //planeMaterial = new Physijs.createMaterial(fieldMaterial, 0.4, 0.8);
+
+        var planeGeometry = new THREE.PlaneGeometry(1,1,6);
+        //var playField = new Physijs.BoxMesh(planeGeometry, planeMaterial,0);
+        var playField = new THREE.Mesh(planeGeometry, fieldMaterial);
+		playField.scale.x = 800;
+		playField.scale.y = 800;
+        playField.name = "PlayField";
+        scene.add(playField);
 	}
 
 	///Load player pieces
 	function loadPlayerPieces()
+	{
+
+	}
+
+	///Player begins turn, timer starts
+	function startTurn()
+	{
+
+	}
+
+	///Player completes turn, timer stops. Bonus if early, penalty if late
+	function completeTurn()
 	{
 
 	}
