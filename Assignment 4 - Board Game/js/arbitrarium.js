@@ -30,6 +30,9 @@
 	var camera;
 	var spotlight;
 
+	var playerGamePiece = new THREE.Object3D();
+	var computerGamePiece = new THREE.Object3D();
+
 	var mouse = new THREE.Vector2();
 	var selectedobject = null;
 	
@@ -44,13 +47,17 @@
 	var gameEnded = false;
 
 	var spaceSize = 160;	//Size of board spaces
-	var playerOffsetX = -80;//X offset so pieces don't collide
+	var playerOffsetY = -40;//X offset so pieces don't collide
+	var computerOffsetY = 40;
 	var turnTime = 30;		//Time in seconds for players to complete turn
 
 	//Mapping between spaces on board and x,y coordinates
 	var boardSpacesX = [-2*spaceSize, -spaceSize, 0, spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, spaceSize, 0, -spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize ];
 	var boardSpacesY = [2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, 2*spaceSize, spaceSize, 0, -spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize, -2*spaceSize,-2*spaceSize, -spaceSize, 0, spaceSize ];
 	
+	var playerSpace = 0;
+	var computerSpace = 0;
+
 	Physijs.scripts.worker = 'libs/physijs_worker.js';
 	Physijs.scripts.ammo = 'ammo.js';
 
@@ -86,7 +93,8 @@
 		//createFloatingText();
 		loadGameBoard();
 
-		loadZune();
+		//loadZune();
+		loadGamePieces();
 		
 		// Output to the stream
 		//document.body.appendChild( renderer.domElement );
@@ -109,9 +117,10 @@
 	
 	function setupCamera()
 	{
-		camera.position.x = 100;
-		camera.position.y = 100;
-		camera.position.z = 100;
+		//camera.position.x = 100;
+		//camera.position.y = -300;
+		camera.position.z = 1000;
+		//camera.rotation.x = Math.PI;
 		camera.lookAt( scene.position );
 	}
 	
@@ -159,17 +168,45 @@
 		}
 	}
 
-	//Add spotlight
-	function setupSpotlight()
-	{
-		spotlight = new THREE.SpotLight();
-		spotlight.position.set(50,50,200);
-		spotlight.shadowNear = 10;
-		spotlight.shadowFar = 100;
-		spotlight.castShadow = true;
-		spotlight.intensity = 3;
-		scene.add(spotlight);
-	}
+	//Create default spotlights, two in opposite corners for good coverage
+    function setupSpotlight()
+    {
+        spotlight1 = new THREE.SpotLight();
+        spotlight2 = new THREE.SpotLight();
+		spotlight3 = new THREE.SpotLight();
+		spotlight4 = new THREE.SpotLight();
+
+		var intensity = 2.5;
+
+		spotlight1.position.set(500,500,300);
+		spotlight1.shadowNear = 10;
+		spotlight1.shadowFar = 100;
+		spotlight1.castShadow = true;
+		spotlight1.intensity = intensity;
+
+        spotlight2.position.set(-500,-500,100);
+		spotlight2.shadowNear = 10;
+		spotlight2.shadowFar = 100;
+		spotlight2.castShadow = true;
+		spotlight2.intensity = intensity;
+
+		spotlight3.position.set(-500,500,100);
+		spotlight3.shadowNear = 10;
+		spotlight3.shadowFar = 100;
+		spotlight3.castShadow = true;
+		spotlight3.intensity = intensity;
+
+		spotlight4.position.set(500,-500,100);
+		spotlight4.shadowNear = 10;
+		spotlight4.shadowFar = 100;
+		spotlight4.castShadow = true;
+		spotlight4.intensity = intensity;
+		
+        scene.add(spotlight1);
+        scene.add(spotlight2);
+		scene.add(spotlight3);
+		scene.add(spotlight4);
+    }
 	
 	//Render function to update scene
 	function render()
@@ -218,21 +255,24 @@
 		// mesh.scale.x = image.width;
 		// mesh.scale.y = image.height;
 
-		var fieldSurface;
-        var fieldMaterial;
+		var gameBoardSurface;
+        var gameBoardMaterial;
         var planeMaterial;
 
-        fieldSurface = THREE.ImageUtils.loadTexture('assets/graph.png');
-        fieldMaterial = new THREE.MeshLambertMaterial({map: fieldSurface});
-        //planeMaterial = new Physijs.createMaterial(fieldMaterial, 0.4, 0.8);
+        gameBoardSurface = THREE.ImageUtils.loadTexture('assets/board.PNG');
+        gameBoardMaterial = new THREE.MeshLambertMaterial({map: gameBoardSurface});
+        //planeMaterial = new Physijs.createMaterial(gameBoardMaterial, 0.4, 0.8);
 
-        var planeGeometry = new THREE.PlaneGeometry(1,1,6);
-        //var playField = new Physijs.BoxMesh(planeGeometry, planeMaterial,0);
-        var playField = new THREE.Mesh(planeGeometry, fieldMaterial);
-		playField.scale.x = 800;
-		playField.scale.y = 800;
-        playField.name = "PlayField";
-        scene.add(playField);
+        var planeGeometry = new THREE.PlaneGeometry(1,1);
+        //var playgameBoard = new Physijs.BoxMesh(planeGeometry, planeMaterial,0);
+        var gameBoard = new THREE.Mesh(planeGeometry, gameBoardMaterial);
+		gameBoard.position.x = 0;
+		gameBoard.position.y = 0;
+		gameBoard.position.z = 0;
+		gameBoard.scale.x = 800;
+		gameBoard.scale.y = 800;
+        gameBoard.name = "GameBoard";
+        scene.add(gameBoard);
 	}
 
 	///Load player pieces
@@ -253,6 +293,87 @@
 
 	}
 
+	function loadGamePieces()
+	{
+		// instantiate a loader
+		var loader = new THREE.OBJMTLLoader();
+		var loader1 = new THREE.OBJMTLLoader();
+		
+		// load an obj / mtl resource pair
+		loader.load(
+			// OBJ resource URL
+			'assets/rook.obj',
+			// MTL resource URL	
+			'assets/rook.mtl',
+			// Function when both resources are loaded
+			function ( object ) 
+			{
+				// Added to fix raycasting
+				object.castShadow = true;
+				object.receiveShadow = true;
+				object.scale.set(1,1,1);
+
+				var playerGamePiece = new THREE.Object3D();
+				playerGamePiece.name = 'PlayerGamePiece';
+				object.parent = playerGamePiece;
+				playerGamePiece.add( object );
+
+				scene.add(playerGamePiece);
+
+				playerGamePiece.position.x = boardSpacesX[playerSpace];
+				playerGamePiece.position.y = boardSpacesY[playerSpace] + playerOffsetY;
+			}
+		);
+
+		// load an obj / mtl resource pair
+		loader1.load(
+			// OBJ resource URL
+			'assets/rook.obj',
+			// MTL resource URL	
+			'assets/rook.mtl',
+			// Function when both resources are loaded
+			function ( object ) 
+			{
+				// Added to fix raycasting
+				object.castShadow = true;
+				object.receiveShadow = true;
+				object.scale.set(1,1,1);
+
+				//var obj = new THREE.Object3D();
+				computerGamePiece.name = 'ComputerGamePiece';
+				object.parent = computerGamePiece;
+				computerGamePiece.add( object );
+
+				scene.add(computerGamePiece);
+
+				computerGamePiece.position.x = boardSpacesX[computerSpace];
+				computerGamePiece.position.y = boardSpacesY[computerSpace] + computerOffsetY;
+			}
+		);
+	}
+
+	function testMoveGamePieces()
+	{
+		if(playerSpace == 15){
+			playerSpace = 0;
+		}else{
+			playerSpace++;
+		}
+		if(computerSpace == 15){
+			computerSpace = 0;
+		}else{
+			computerSpace++;
+		}
+			
+
+		playerGamePiece.position.x = boardSpacesX[playerSpace];
+		playerGamePiece.position.y = boardSpacesY[playerSpace] + playerOffsetY;
+
+		computerGamePiece.position.x = boardSpacesX[computerSpace];
+		computerGamePiece.position.y = boardSpacesY[computerSpace] + computerOffsetY;
+
+	}
+
 	function loadZune( )
 	{
 		// instantiate a loader
@@ -261,25 +382,29 @@
 		// load an obj / mtl resource pair
 		loader.load(
 			// OBJ resource URL
-			'assets/zune_120_obj/zune_120.obj',
-
+			//'assets/zune_120_obj/zune_120.obj',
+			'assets/rook.obj',
 			// MTL resource URL	
-			'assets/zune_120_obj/rook.mtl',
-			
+			//'assets/zune_120_obj/rook.mtl',
+			'assets/rook.mtl',
 			// Function when both resources are loaded			// Function when both resources are loaded
 			function ( object ) 
 			{
 				// Added to fix raycasting
 				object.castShadow = true;
 				object.receiveShadow = true;
-				object.scale.set( .3, .3, .3 );
-				
+				//object.scale.set( .3, .3, .3 );
+				object.scale.set(1,1,1);
+
 				var obj = new THREE.Object3D();
 				obj.name = 'Zune';
 				object.parent = obj;
 				obj.add( object );
 
 				scene.add(obj);
+
+				obj.position.x = boardSpacesX[playerSpace] + playerOffsetX;
+				obj.position.y = boardSpacesY[playerSpace];
 
 				//obj.rotation.x = -(Math.PI/2);
 			}
