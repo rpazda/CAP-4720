@@ -24,6 +24,9 @@
 
     <link href="https://fonts.googleapis.com/css?family=Orbitron:700" rel="stylesheet"> 
 
+    <!--Material Icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <style>
         body
         {
@@ -45,6 +48,10 @@
             color:#ef52f2;
         }
         #endgame-modal
+        {
+            background-color:#46484c;
+        }
+        #help-modal
         {
             background-color:#46484c;
         }
@@ -99,7 +106,7 @@
             <div class="row">
                 <h5>Controls</h5>
 
-                    <ul style="list-style-type: none" class="col s10">
+                    <!--<ul style="list-style-type: none" class="col s10">
                         <li><span class="text-highlight-color">W</span> - Move Forward</li>
                         <li><span class="text-highlight-color">S</span> - Move Backward</li>
                         <li><span class="text-highlight-color">A</span> - Strafe Left</li>
@@ -108,7 +115,7 @@
                     </ul>
 
                 <btn class="btn purple" onclick="turnLeft()" id="">Turn Left</btn>
-                <btn class="btn purple spacer" onclick="turnRight()" id="">Turn Right</btn>
+                <btn class="btn purple spacer" onclick="turnRight()" id="">Turn Right</btn>-->
 
             </div>
 
@@ -121,6 +128,7 @@
                 <btn class="btn purple spacer" onclick="toggleSounds()" id="sounds-toggle">Sounds Off</btn>
                 <btn class="btn purple spacer" onclick="pauseGame(); render()" id="pause-button">Pause Game</btn>
                 <btn class="btn purple spacer" onclick="testMoveGamePieces()" id="">Test Move</btn>
+                <btn class="btn teal spacer" onclick="openHelpModal()" id="">Help</btn>
 
             </div>
 
@@ -143,6 +151,20 @@
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-action waves-effect btn purple" onClick="window.location.reload()">Replay</a>
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal">
+        <div class="modal-content" id="">
+            <center><span class="text-highlight-color"><h5>Arbitrarium</h5></span></center>
+            <ul style="list-style-type: none">
+                <li></li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+             <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">
+                Close
+            </a>
         </div>
     </div>
 

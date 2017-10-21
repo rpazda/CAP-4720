@@ -62,13 +62,15 @@
 	Physijs.scripts.ammo = 'ammo.js';
 
 	$(document).ready(function() {
-
+		$('.modal').modal();
+		//openHelpModal();
 	});
 
 	function beginGame()
 	{
 		init();
 		$('#begin-game-button').remove();
+		//closeHelpModal();
 	}
 
 	function init()
@@ -92,7 +94,7 @@
 		//loadSounds();
 		//createFloatingText();
 		loadGameBoard();
-		startTurn();
+		//startTurn();
 
 		//loadZune();
 		loadGamePieces();
@@ -485,6 +487,16 @@
 			gamePaused = false;
 		}
     }
+
+	function openHelpModal()
+	{
+		$('#help-modal').modal('open');
+	}
+
+	function closeHelpModal()
+	{
+		$('#help-modal').modal('close');
+	}
 
 	///Add non-funtional game details
 	function addProps()
