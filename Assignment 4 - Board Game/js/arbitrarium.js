@@ -92,6 +92,7 @@
 		//loadSounds();
 		//createFloatingText();
 		loadGameBoard();
+		startTurn();
 
 		//loadZune();
 		loadGamePieces();
@@ -283,14 +284,39 @@
 
 	///Player begins turn, timer starts
 	function startTurn()
+	{	
+		var t = setTimeout(continueTurn, 1000);	//Start turn after one second
+	}
+
+	function continueTurn()
 	{
+		if(turnTime == 0)
+		{
+			completeTurn();
+		}
+		else{
+			turnTime--;	//Remove a second from the turn time
+			updateTurnTimer();//Update the turn timer display
+			var t = setTimeout(continueTurn, 1000);
+		}
 
 	}
 
 	///Player completes turn, timer stops. Bonus if early, penalty if late
 	function completeTurn()
 	{
+		turntime = 30;
+		clearTurnTimer();
+	}
 
+	function updateTurnTimer()
+	{
+		$('#turn-timer-display').html(turnTime);
+	}
+
+	function clearTurnTimer()
+	{
+		$('#turn-timer-display').html('--');
 	}
 
 	function loadGamePieces()
@@ -302,8 +328,10 @@
 		// load an obj / mtl resource pair
 		loader.load(
 			// OBJ resource URL
+			//'assets/models/crow.obj',
 			'assets/rook.obj',
 			// MTL resource URL	
+			//'assets/models/crow.mtl',
 			'assets/rook.mtl',
 			// Function when both resources are loaded
 			function ( object ) 
@@ -313,7 +341,7 @@
 				object.receiveShadow = true;
 				object.scale.set(1,1,1);
 
-				var playerGamePiece = new THREE.Object3D();
+				//var playerGamePiece = new THREE.Object3D();
 				playerGamePiece.name = 'PlayerGamePiece';
 				object.parent = playerGamePiece;
 				playerGamePiece.add( object );
@@ -328,8 +356,10 @@
 		// load an obj / mtl resource pair
 		loader1.load(
 			// OBJ resource URL
+			//'assets/models/crow.obj',
 			'assets/rook.obj',
 			// MTL resource URL	
+			//'assets/models/crow.mtl',
 			'assets/rook.mtl',
 			// Function when both resources are loaded
 			function ( object ) 
