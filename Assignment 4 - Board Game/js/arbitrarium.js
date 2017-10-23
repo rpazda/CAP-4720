@@ -35,7 +35,6 @@
 
 	var mouse = new THREE.Vector2();
 	var selectedobject = null;
-	
 	var raycaster = new THREE.Raycaster();
 	var projector = new THREE.Projector();
 
@@ -45,9 +44,13 @@
 	var soundEnabled = true;
 	var gamePaused = false;
 	var gameEnded = false;
+	var playerTurn = false;
+
+	var playerScore = 0;
+	var computerScore = 0;
 
 	var spaceSize = 160;	//Size of board spaces
-	var playerOffsetY = -40;//X offset so pieces don't collide
+	var playerOffsetY = -40; //Y offset inside spaces so pieces don't collide
 	var computerOffsetY = 40;
 	var turnTime = 30;		//Time in seconds for players to complete turn
 
@@ -87,8 +90,12 @@
 		setupCamera();
 		setupSpotlight();
 		
+		renderer.domElement.addEventListener( 'mousemove', onDocumentMouseMove, false );
+		renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
+		renderer.domElement.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
 		// Main code here.
-		//initGamePanel();
+		initGamePanel();
 		//loadTextures();
 		//loadMusic();
 		//loadSounds();
@@ -247,7 +254,7 @@
 	///Initial maind HUD
 	function initGamePanel()
 	{
-		
+		updateScoreDisplay();
 	}
 
 	///Load the game board
@@ -287,12 +294,13 @@
 	///Player begins turn, timer starts
 	function startTurn()
 	{	
+		playerTurn == true;
 		var t = setTimeout(continueTurn, 1000);	//Start turn after one second
 	}
 
 	function continueTurn()
 	{
-		if(turnTime == 0)
+		if(turnTime == 0 || playerTurn == false)
 		{
 			completeTurn();
 		}
@@ -304,9 +312,10 @@
 
 	}
 
-	///Player completes turn, timer stops. Bonus if early, penalty if late
+	///Player completes turn, timer stops. Bonus if early, penalty if late, late is <10s remaining
 	function completeTurn()
-	{
+	{	
+		playerScore += (turnTime - 20) * 10;
 		turntime = 30;
 		clearTurnTimer();
 	}
@@ -406,41 +415,19 @@
 
 	}
 
-	function loadZune( )
+	function boardSpaceEffects()
 	{
-		// instantiate a loader
-		var loader = new THREE.OBJMTLLoader();
-		
-		// load an obj / mtl resource pair
-		loader.load(
-			// OBJ resource URL
-			//'assets/zune_120_obj/zune_120.obj',
-			'assets/rook.obj',
-			// MTL resource URL	
-			//'assets/zune_120_obj/rook.mtl',
-			'assets/rook.mtl',
-			// Function when both resources are loaded			// Function when both resources are loaded
-			function ( object ) 
+		if(playerTurn == true)
+		{
+			if( (computerSpace - 2) % 4 == 0) //spaces 2, 6, 10, 14 coinflip
 			{
-				// Added to fix raycasting
-				object.castShadow = true;
-				object.receiveShadow = true;
-				//object.scale.set( .3, .3, .3 );
-				object.scale.set(1,1,1);
-
-				var obj = new THREE.Object3D();
-				obj.name = 'Zune';
-				object.parent = obj;
-				obj.add( object );
-
-				scene.add(obj);
-
-				obj.position.x = boardSpacesX[playerSpace] + playerOffsetX;
-				obj.position.y = boardSpacesY[playerSpace];
-
-				//obj.rotation.x = -(Math.PI/2);
+				
 			}
-		);
+		}
+		else if(playerTurn == false)
+		{
+
+		}
 	}
 
 	///Turn music on/off
@@ -488,6 +475,23 @@
 		}
     }
 
+	//Endgame condition reached
+	function endGame()
+	{	
+		var endGameText = "";
+		if(playerScore > computerScore)
+		{
+			endGameText = "You Won!"
+		}
+		else 
+		{
+			endGameText = "You Lost!"
+		}
+		$('#endgame-text').html(endGameText);
+		$('#final-score').html(playerScore);
+		$('#endgame-modal').modal('open');
+	}
+
 	function openHelpModal()
 	{
 		$('#help-modal').modal('open');
@@ -507,7 +511,8 @@
 	///Update score in HUD
 	function updateScoreDisplay()
 	{
-		$("#score-display").html(score);
+		$('#CPU-score-dislay').html(computerScore);
+		$('#score-display').html(playerScore);
 	}
 
 	///Adds motivational 3D text
@@ -532,5 +537,98 @@
 
 		scene.add(textObject);
 	}
+
+	function onDocumentMouseMove( event ) 
+	{
+		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
+		var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+		projector.unprojectVector( vector, camera );
+		raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+		
+	}
+
+		// var intersects = raycaster.intersectObjects( scene.children, true );
+		// if ( intersects.length > 0 )
+
+	function onDocumentMouseDown( event ) 
+	{
+		event.preventDefault();
+		var intersects = raycaster.intersectObjects( scene.children, true );
+		if ( intersects.length > 0 )
+		{
+			alert('butt');
+		}
+	}		
+
+	function onDocumentMouseUp( event ) 
+	{
+		event.preventDefault();
+		
+	}
 	
 	window.onload = init();
+
+//////////////////////////
+//////////////////////////
+// Deprecated Functions //
+//////////////////////////
+//////////////////////////
+//                                                  ,::::.._
+//                                                ,':::::::::.
+//                                            _,-'`:::,::(o)::`-,.._
+//                                         _.', ', `:::::::::;'-..__`.
+//                                    _.-'' ' ,' ,' ,\:::,'::-`'''
+//                                _.-'' , ' , ,'  ' ,' `:::/
+//                          _..-'' , ' , ' ,' , ,' ',' '/::
+//                  _...:::'`-..'_, ' , ,'  , ' ,'' , ,'::|
+//               _`.:::::,':::::,'::`-:..'_',_'_,'..-'::,'|
+//       _..-:::'::,':::::::,':::,':,'::,':::,'::::::,':::;
+//         `':,'::::::,:,':::::::::::::::::':::,'::_:::,'/
+//         __..:'::,':::::::--''' `-:,':,':::'::-' ,':::/
+//    _.::::::,:::.-''-`-`..'_,'. ,',  , ' , ,'  ', `','
+//  ,::SSt:''''`                 \:. . ,' '  ,',' '_,'
+//                                ``::._,'_'_,',.-'
+//                                    \\ \\
+//                                     \\_\\
+//                                      \\`-`.-'_
+//                                   .`-.\\__`. ``
+//                                      ``-.-._
+//                                          `
+
+	function loadZune( )
+	{
+		// instantiate a loader
+		var loader = new THREE.OBJMTLLoader();
+		
+		// load an obj / mtl resource pair
+		loader.load(
+			// OBJ resource URL
+			//'assets/zune_120_obj/zune_120.obj',
+			'assets/rook.obj',
+			// MTL resource URL	
+			//'assets/zune_120_obj/rook.mtl',
+			'assets/rook.mtl',
+			// Function when both resources are loaded			// Function when both resources are loaded
+			function ( object ) 
+			{
+				// Added to fix raycasting
+				object.castShadow = true;
+				object.receiveShadow = true;
+				//object.scale.set( .3, .3, .3 );
+				object.scale.set(1,1,1);
+
+				var obj = new THREE.Object3D();
+				obj.name = 'Zune';
+				object.parent = obj;
+				obj.add( object );
+
+				scene.add(obj);
+
+				obj.position.x = boardSpacesX[playerSpace] + playerOffsetX;
+				obj.position.y = boardSpacesY[playerSpace];
+
+				//obj.rotation.x = -(Math.PI/2);
+			}
+		);
+	}
