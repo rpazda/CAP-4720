@@ -106,6 +106,9 @@
             <div class="row">
                 <h5>Controls</h5>
 
+                    <p>
+                        Click piece to begin your turn
+                    </p>
                     <!--<ul style="list-style-type: none" class="col s10">
                         <li><span class="text-highlight-color">W</span> - Move Forward</li>
                         <li><span class="text-highlight-color">S</span> - Move Backward</li>
@@ -128,8 +131,9 @@
                 <btn class="btn purple spacer" onclick="toggleSounds()" id="sounds-toggle">Sounds Off</btn>
                 <btn class="btn purple spacer" onclick="pauseGame(); render()" id="pause-button">Pause Game</btn>
                 <btn class="btn purple spacer" onclick="testMoveGamePieces()" id="">Test Move</btn>
-                <btn class="btn teal spacer" onclick="openHelpModal()" id="">Help</btn>
-
+                <div class="row">
+                    <btn class="btn teal spacer" onclick="openHelpModal()" id="">Help</btn>
+                </div>
             </div>
 
             <!--<div class="row">
@@ -146,7 +150,7 @@
         <div class="modal-content" id="game-results-modal">
             <center><span class="text-red"><h2>GAME OVER</h2></span></center>
             <ul style="list-style-type: none">
-                <li><h3>Final Score: <span id="endgame-text" class="text-highlight-color"></span></h3></li>
+                <li><h3><span id="endgame-text" class="text-highlight-color"></span></h3></li>
                 <li><h4>Final Score: <span id="final-score" class="text-highlight-color"></span></h4></li>
             </ul>
         </div>

@@ -84,7 +84,7 @@
 
 		camera = new THREE.PerspectiveCamera(
 		// frustum vertical view         aspect ratio							 frustum near plane     frustum far plane
-			45,                          window.innerWidth / window.innerHeight, 0.1,                   1000 );
+			45,                          window.innerWidth / window.innerHeight, 0.1,                   1500 );
 
 		setupRenderer();
 		setupCamera();
@@ -97,9 +97,9 @@
 		// Main code here.
 		initGamePanel();
 		//loadTextures();
-		//loadMusic();
+		loadMusic();
 		//loadSounds();
-		//createFloatingText();
+		createFloatingText();
 		loadGameBoard();
 		//startTurn();
 
@@ -128,7 +128,7 @@
 	function setupCamera()
 	{
 		//camera.position.x = 100;
-		//camera.position.y = -300;
+		camera.position.y = -300;
 		camera.position.z = 1000;
 		//camera.rotation.x = Math.PI;
 		camera.lookAt( scene.position );
@@ -185,6 +185,7 @@
         spotlight2 = new THREE.SpotLight();
 		spotlight3 = new THREE.SpotLight();
 		spotlight4 = new THREE.SpotLight();
+		spotlight5 = new THREE.SpotLight();
 
 		var intensity = 2.5;
 
@@ -211,16 +212,24 @@
 		spotlight4.shadowFar = 100;
 		spotlight4.castShadow = true;
 		spotlight4.intensity = intensity;
+
+		spotlight5.position.set(0,-200,10);
+		spotlight5.shadowNear = 10;
+		spotlight5.shadowFar = 500;
+		spotlight5.castShadow = true;
+		spotlight5.intensity = 10;
 		
         scene.add(spotlight1);
         scene.add(spotlight2);
 		scene.add(spotlight3);
 		scene.add(spotlight4);
+		scene.add(spotlight5);
     }
 	
 	//Render function to update scene
 	function render()
 	{	
+		//Render only if game is not paused or over
 		if(gamePaused == false && !gameEnded)
         {
 			scene.simulate();
@@ -260,11 +269,6 @@
 	///Load the game board
 	function loadGameBoard()
 	{
-		// var geometry = new THREE.PlaneGeometry( 1, 1 );
-		// var mesh = new THREE.Mesh( geometry, material );
-		// mesh.scale.x = image.width;
-		// mesh.scale.y = image.height;
-
 		var gameBoardSurface;
         var gameBoardMaterial;
         var planeMaterial;
@@ -276,19 +280,30 @@
         var planeGeometry = new THREE.PlaneGeometry(1,1);
         //var playgameBoard = new Physijs.BoxMesh(planeGeometry, planeMaterial,0);
         var gameBoard = new THREE.Mesh(planeGeometry, gameBoardMaterial);
-		gameBoard.position.x = 0;
-		gameBoard.position.y = 0;
-		gameBoard.position.z = 0;
+		gameBoard.position.x = 1;
+		gameBoard.position.y = 1;
+		gameBoard.position.z = 1;
 		gameBoard.scale.x = 800;
 		gameBoard.scale.y = 800;
         gameBoard.name = "GameBoard";
         scene.add(gameBoard);
-	}
 
-	///Load player pieces
-	function loadPlayerPieces()
-	{
+		//Load table for board to sit on
+		var tableSurface;
+        var tableMaterial;
 
+        tableSurface = THREE.ImageUtils.loadTexture('assets/wood.jpg');
+        tableMaterial = new THREE.MeshLambertMaterial({map: tableSurface});
+
+        var tableGeometry = new THREE.PlaneGeometry(1,1);
+        var table = new THREE.Mesh(tableGeometry, tableMaterial);
+		table.position.x = 0;
+		table.position.y = 0;
+		table.position.z = 0;
+		table.scale.x = 1400;
+		table.scale.y = 1800;
+        table.name = "Table";
+        scene.add(table);
 	}
 
 	///Player begins turn, timer starts
@@ -333,11 +348,11 @@
 	function loadGamePieces()
 	{
 		// instantiate a loader
-		var loader = new THREE.OBJMTLLoader();
-		var loader1 = new THREE.OBJMTLLoader();
+		var playerPieceLoader = new THREE.OBJMTLLoader();
+		var computerPieceLoader = new THREE.OBJMTLLoader();
 		
 		// load an obj / mtl resource pair
-		loader.load(
+		playerPieceLoader.load(
 			// OBJ resource URL
 			//'assets/models/crow.obj',
 			'assets/rook.obj',
@@ -365,7 +380,7 @@
 		);
 
 		// load an obj / mtl resource pair
-		loader1.load(
+		computerPieceLoader.load(
 			// OBJ resource URL
 			//'assets/models/crow.obj',
 			'assets/rook.obj',
@@ -406,7 +421,7 @@
 			computerSpace++;
 		}
 			
-
+		//Adjust for player offsets in space
 		playerGamePiece.position.x = boardSpacesX[playerSpace];
 		playerGamePiece.position.y = boardSpacesY[playerSpace] + playerOffsetY;
 
@@ -419,9 +434,17 @@
 	{
 		if(playerTurn == true)
 		{
-			if( (computerSpace - 2) % 4 == 0) //spaces 2, 6, 10, 14 coinflip
+			if( (playerSpace - 2) % 4 == 0) //spaces 2, 6, 10, 14 coinflip
 			{
 				
+			}
+			else if (playerSpace % 2 == 1) //odd spaces, guess in range
+			{
+
+			}
+			else if(playerSpace % 4 == 0)	//corners, chance
+			{
+
 			}
 		}
 		else if(playerTurn == false)
@@ -511,17 +534,17 @@
 	///Update score in HUD
 	function updateScoreDisplay()
 	{
-		$('#CPU-score-dislay').html(computerScore);
+		$('#cpu-score-display').html(computerScore);
 		$('#score-display').html(playerScore);
 	}
 
 	///Adds motivational 3D text
 	function createFloatingText(){
-		var textString = "";
+		var textString = "Arbitrarium";
 
 		var textObjectGeometry = new THREE.TextGeometry(textString, {
-			size: 8.5,
-			height: 3,
+			size: 40,
+			height: 10,
 			curveSegments: 10,
 			bevelEnabled: false
 		});
@@ -530,9 +553,9 @@
 
 		textObject = new THREE.Mesh( textObjectGeometry, textObjectMaterial);
 
-		textObject.position.x = -80;
-		textObject.position.y = -85;
-		textObject.position.z = 3;
+		textObject.position.x = -50;
+		textObject.position.y = 0;
+		textObject.position.z = 5;
 		//textObject.rotation.x = Math.PI/2;
 
 		scene.add(textObject);
@@ -548,16 +571,28 @@
 		
 	}
 
-		// var intersects = raycaster.intersectObjects( scene.children, true );
-		// if ( intersects.length > 0 )
-
 	function onDocumentMouseDown( event ) 
 	{
 		event.preventDefault();
+
+		var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+		projector.unprojectVector( vector, camera );
+		raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+
 		var intersects = raycaster.intersectObjects( scene.children, true );
 		if ( intersects.length > 0 )
 		{
-			alert('butt');
+			for( var i=0; i<intersects.length; i++ )
+			{
+				var obj = intersects[i].object;
+				var name = obj.name;
+				
+				console.log(name);
+				// if(name == 'PlayerGamePiece'){
+				
+				// }
+			
+			}
 		}
 	}		
 
@@ -567,13 +602,13 @@
 		
 	}
 	
-	window.onload = init();
+	//window.onload = init();
 
 //////////////////////////
 //////////////////////////
 // Deprecated Functions //
 //////////////////////////
-//////////////////////////
+//////////////////////////                                     A bird, because I wanted one here
 //                                                  ,::::.._
 //                                                ,':::::::::.
 //                                            _,-'`:::,::(o)::`-,.._
