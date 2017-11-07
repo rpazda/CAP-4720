@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>r pazda</title>
+
+    <script src="libs/three.js"></script>
+    <script src="libs/keyboard.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:700" rel="stylesheet"> 
+
+    <!--Material Icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body
+        {
+            background-color: black;
+            color: #b2ffea;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        button
+        {
+            margin-bottom: 5px;
+        }
+        .spacer
+        {
+            margin-top: 5px;
+        }
+        .text-highlight-color
+        {
+            color:#ef52f2;
+        }
+    </style>
+
+</head>
+
+<body>
+    <script type="text/x-glsl" id="vertex">
+        varying vec2 uVu;
+        void main()
+        {
+            uVu = uv;
+
+            gl_Position = projectionMatrix *
+                modelViewMatrix *
+                vec4(position,1.0);
+        }
+    </script>
+
+    <!--Pattern for the square with simple vertex shader-->
+    <script type="text/x-glsl" id="fragment">
+        varying vec2 uVu;
+        void main()
+        {
+            float red = uVu.x;
+            float green = abs(uVu.x - uVu.y);
+            float blue = (uVu.x+uVu.y) - abs(uVu.x - uVu.y);
+            gl_FragColor = vec4(red,green,blue,1.0);
+        }
+    </script>
+
+    <!--Pattern for sphere that produces seamless pattern-->
+    <script type="text/x-glsl" id="sphere">
+        varying vec2 uVu;
+        void main()
+        {
+            float red = sin(uVu.x*23.12);
+            float green = cos(uVu.y*23.12);
+            float blue = tan((uVu.x+uVu.y)*12.56);
+            gl_FragColor = vec4(red,green,blue,1.0);
+        }
+    </script>
+
+    <!--Pattern for cube with simple pattern-->
+    <script type="text/x-glsl" id="pattern">
+        varying vec2 uVu;
+        void main()
+        {
+            float red = sin(uVu.y*uVu.x);
+            float green = cos(uVu.x*50.0);
+            float blue = sin(uVu.y*uVu.x);
+            gl_FragColor = vec4(red,green,blue,1.0);
+        }
+    </script>
+
+    <!--Pattern for cube with simple moving pattern-->
+    <script type="text/x-glsl" id="pattern-motion">
+        varying vec2 uVu;
+        void main()
+        {
+            float red = uVu.x;
+            float green = uVu.y;
+            float blue = (uVu.x+uVu.y)/2.0;
+            gl_FragColor = vec4(red,green,blue,1.0);
+        }
+    </script>
+
+    <div class="container">
+
+        <div class="row" style="margin-top: 10px;">
+
+            
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col s3">
+            <div class="row">
+                <center><img src="assets/logo.png"style="width:30%;"></img></center>
+                <br>
+                <center><h6>richard pazda</h6></center>
+            </div>
+            <hr>
+            <center><h4 class="text-highlight-color">Shaders</h4></center>
+            <div class="row">
+                <ul style="list-style-type: none" class="col s10">
+                    <li><span class="text-highlight-color">Top Left</span> - Vertex Shader</li>
+                    <li><span class="text-highlight-color">Bottom Left</span> - Sphere Shader</li>
+                    <li><span class="text-highlight-color">Top Right</span> - Pattern Shader</li>
+                    <li><span class="text-highlight-color">Bottom Right</span> - Moving Pattern Shader</li>
+                </ul>
+            </div>
+            <hr>
+        </div>
+
+        <div class="col s9" id="game-window">
+        
+        </div>
+
+    </div>
+
+    <script src="js/shadersDemo.js"></script>
+    <script src="js/shaders.js"></script>
+
+</body>
+
+</html>
