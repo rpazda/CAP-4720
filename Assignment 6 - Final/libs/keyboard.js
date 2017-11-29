@@ -10,13 +10,16 @@ var Key = {
     D: 68,
     F: 70,
     L: 76,
-    Q: 81,
     R: 82,
     S: 83,
     U: 85,
     W: 87,
+	Q: 81,
 
     SPACE: 32,
+	
+	TAB: 9,
+	ESCAPE: 27,
 
     LEFTARROW: 37,
     UPARROW: 38,
@@ -35,6 +38,10 @@ var Key = {
     delete this._pressed[event.keyCode];
   }
 };
+
+function initKeyControls(){
+
+}
 
 
 /*

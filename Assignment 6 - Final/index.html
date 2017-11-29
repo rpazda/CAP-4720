@@ -1,42 +1,90 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
     <meta charset="UTF-8">
-
-    <title>r pazda</title>
+    <title>r pazda</title>  
 
     <script src="libs/three.js"></script>
     <script src="libs/keyboard.js"></script>
+    <script src="js/PointerLockControls.js"></script>
+    <script src="libs/helvetiker_regular.typeface.js"></script>
     <script src="loaders/OBJLoader.js"></script>
     <script src="loaders/MTLLoader.js"></script>
     <script src="loaders/OBJMTLLoader.js"></script>
+    
+    <script src="js/shaders.js"></script>
 
+    <!-- Google jQuery CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
+    
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
+    <!-- Google Orbitron font CDN -->
     <link href="https://fonts.googleapis.com/css?family=Orbitron:700" rel="stylesheet"> 
 
     <!--Material Icons-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+<style>
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
 
-    <style>
-        body
-        {
-            background-color: black;
+        body {
+            background-color: #000000;
             color: #b2ffea;
-            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            font-family: arial;
         }
-        
-        button
-        {
-            margin-bottom: 5px;
+
+        #blocker {
+
+            position: absolute;
+
+            width: 100%;
+            height: 100%;
+
+            background-color: rgba(0,0,0,0.5);
+
         }
+
+        #instructions {
+
+            width: 100%;
+            height: 100%;
+
+            display: -webkit-box;
+            display: -moz-box;
+            display: box;
+
+            -webkit-box-orient: horizontal;
+            -moz-box-orient: horizontal;
+            box-orient: horizontal;
+
+            -webkit-box-pack: center;
+            -moz-box-pack: center;
+            box-pack: center;
+
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            box-align: center;
+
+            cursor: pointer;
+
+        }
+
+        p {
+            text-align: right;
+        }
+
         .spacer
         {
             margin-top: 5px;
@@ -47,9 +95,6 @@
         }
     </style>
 
-</head>
-
-<body>
     <script type="text/x-glsl" id="vertex">
         varying vec2 uVu;
         void main()
@@ -67,85 +112,44 @@
         varying vec2 uVu;
         void main()
         {
-            float red = uVu.x;
-            float green = abs(uVu.x - uVu.y);
-            float blue = (uVu.x+uVu.y) - abs(uVu.x - uVu.y);
+            float red = uVu.x- uVu.y;
+            float green = abs(uVu.y/uVu.x);
+            float blue = (uVu.x/uVu.y);
             gl_FragColor = vec4(red,green,blue,1.0);
         }
     </script>
 
-    <!--Pattern for sphere that produces seamless pattern-->
-    <script type="text/x-glsl" id="sphere">
-        varying vec2 uVu;
-        void main()
-        {
-            float red = sin(uVu.x*23.12);
-            float green = cos(uVu.y*23.12);
-            float blue = tan((uVu.x+uVu.y)*12.56);
-            gl_FragColor = vec4(red,green,blue,1.0);
-        }
-    </script>
+</head>
 
-    <!--Pattern for cube with simple pattern-->
-    <script type="text/x-glsl" id="pattern">
-        varying vec2 uVu;
-        void main()
-        {
-            float red = sin(uVu.y*uVu.x);
-            float green = cos(uVu.x*50.0);
-            float blue = sin(uVu.y*uVu.x);
-            gl_FragColor = vec4(red,green,blue,1.0);
-        }
-    </script>
+<body>
+    
+    <script src="js/vaporgame.js"></script>
 
-    <!--Pattern for cube with simple moving pattern-->
-    <script type="text/x-glsl" id="pattern-motion">
-        varying vec2 uVu;
-        void main()
-        {
-            float red = uVu.x;
-            float green = uVu.y;
-            float blue = (uVu.x+uVu.y)/2.0;
-            gl_FragColor = vec4(red,green,blue,1.0);
-        }
-    </script>
+    <div id="blocker">
 
-    <div class="container">
-
-        <div class="row" style="margin-top: 10px;">
-
-            
+        <div style="margin-left: 20px;">
+            <h2><i>V A P O R</i></h2>  
+            <h3>by r pazda</h3>
         </div>
-
-    </div>
-
-    <div class="row">
-
-        <div class="col s9" id="game-window">
                 
+        <div id="instructions">
+            <span style="font-size:40px">It's all in your head...</span>
+            <br />
+            <ul style="list-style-type: none; margin-left: 20px;" class="">
+                <li><span class="text-highlight-color">Q</span> - Select Album</li>
+                <li><span class="text-highlight-color">W</span> - Move Forward</li>
+                <li><span class="text-highlight-color">S</span> - Move Backward</li>
+                <li><span class="text-highlight-color">A</span> - Strafe Left</li>
+                <li><span class="text-highlight-color">D</span> - Strafe Right</li>
+                <hr>
+                <li><span class="text-highlight-color"><i class="material-icons" alt="mouse icon">mouse</i></span> - Look</li>
+            </ul>
+            <br />
+            <h4><span id="now-playing"></span></h4>
         </div>
-
-        <div class="col s3">
-            <div class="row">
-                <center><img src="assets/logo.png"style="width:30%;"></img></center>
-                <br>
-                <center><h6>richard pazda</h6></center>
-            </div>
-            <hr>
-            <center><h4 class="text-highlight-color"><i>V A P O R</i></h4></center>
-            <div class="row">
-                <ul style="list-style-type: none" class="col s10">
-                    <li><span class="text-highlight-color">Name</span> - Descriptor</li>
-                </ul>
-            </div>
-            <hr>
-        </div>
-
+        
     </div>
-
-    <script src="js/VAPOR.js"></script>
-    <script src="js/shaders.js"></script>
-
+    
 </body>
 
 </html>
